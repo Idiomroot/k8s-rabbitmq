@@ -7,7 +7,7 @@
 二、构建镜像
 ###### # cd ../
 ###### # docker build -t 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4 .
-###### # docker push 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4
+###### # docker push 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4 （没有私有harbor可以省略此步骤）
 三、生成cookie文件
 ###### # sh erlang-cookie.sh
 四、配置rbac
