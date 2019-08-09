@@ -1,0 +1,83 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+spec:
+  serviceName: rabbitmq
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      serviceAccountName: rabbitmq
+      imagePullSecrets: 
+        - name: regsecret
+      containers:
+      - name: rabbitmq
+        image: 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4 
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "150m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        volumeMounts:
+          - name: rabbitmq-data
+            mountPath: /var/lib/rabbitmq/mnesia
+        ports:
+        - containerPort: 5672
+          name: amqp
+        env:
+          - name: RABBITMQ_DEFAULT_USER
+            value: comma 
+          - name: RABBITMQ_DEFAULT_PASS
+            value: commaai2017
+          - name: RABBITMQ_ERLANG_COOKIE
+            valueFrom:
+              secretKeyRef:
+                name: erlang.cookie
+                key: erlang.cookie
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: K8S_SERVICE_NAME
+            value: "rabbitmq"
+          - name: RABBITMQ_USE_LONGNAME
+            value: "true"
+          - name: RABBITMQ_NODENAME
+            value: "rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME)"
+          - name: RABBITMQ_NODE_TYPE
+            value: disc
+          - name: AUTOCLUSTER_TYPE
+            value: "k8s"
+          - name: AUTOCLUSTER_DELAY
+            value: "10"
+          - name: AUTOCLUSTER_CLEANUP
+            value: "true"
+          - name: CLEANUP_WARN_ONLY
+            value: "false"
+          - name: K8S_ADDRESS_TYPE
+            value: "hostname"
+          - name: K8S_HOSTNAME_SUFFIX
+            value: ".$(K8S_SERVICE_NAME)"
+      volumes:
+        - name: rabbitmq-data
+          persistentVolumeClaim:
+            claimName: rabbitmq-data-claim
+#vi pvc-data.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rabbitmq-data-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "pointsmart-nfs-storage"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 30Gi
