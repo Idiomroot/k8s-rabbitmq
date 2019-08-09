@@ -1,9 +1,11 @@
 ## k8s安装rabbitmq集群
 一、下载rabbitmq集群插件
-###### mkdir plugins && cd plugins
-###### wget https://github.com/rabbitmq/rabbitmq-autocluster/releases/download/0.10.0/autocluster-0.10.0.ez
-###### wget https://github.com/rabbitmq/rabbitmq-autocluster/releases/download/0.10.0/rabbitmq_aws-0.10.0.ez
+###### # git clone https://github.com/Idiomroot/k8s-rabbitmq.git
+###### # mkdir plugins && cd plugins
+###### # wget https://github.com/rabbitmq/rabbitmq-autocluster/releases/download/0.10.0/autocluster-0.10.0.ez
+###### # wget https://github.com/rabbitmq/rabbitmq-autocluster/releases/download/0.10.0/rabbitmq_aws-0.10.0.ez
 二、构建镜像
+###### # cd ../
 ###### # docker build -t 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4 .
 ###### # docker push 172.16.0.14:5000/pointsmart/rabbitmq3.7:v4
 三、生成cookie文件
